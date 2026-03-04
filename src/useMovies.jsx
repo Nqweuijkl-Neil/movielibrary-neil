@@ -16,7 +16,7 @@ export function useMovies(query) {
                     setIsLoading(true);
                     setError("");
                     const res = await fetch(
-                        `http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`,
+                        `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(query)}`,
                         { signal: controller.signal },
                     );
 
@@ -27,9 +27,9 @@ export function useMovies(query) {
                     const data = await res.json();
 
                     if (data.Response === "False")
-                        throw new Error("Movie not found!");
+                        throw new Error(data.Error || "Movie not found!");
 
-                    setMovies(data.Search);
+                    setMovies(data.Search ?? []);
                     setError("");
                 } catch (err) {
                     if (err.name !== "AbortError") setError(err.message);
